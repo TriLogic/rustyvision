@@ -1,5 +1,5 @@
 use crate::core::rect::TRect;
-use crate::core::event::TEvent;
+use crate::core::event::{TEvent, TEventQueue};
 use crate::core::view::TView;
 use crate::ui::screenbuffer::ScreenBuffer;
 use crossterm::event::{KeyCode, KeyEvent};
@@ -70,7 +70,7 @@ impl TView for TListBox {
         }
     }
 
-    fn handle_event(&mut self, event: TEvent) {
+    fn handle_event(&mut self, event: TEvent, queue: &TEventQueue) {
         if let TEvent::Key(KeyEvent { code, .. }) = event {
             match code {
                 KeyCode::Up => {

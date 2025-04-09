@@ -1,5 +1,5 @@
 use crate::core::rect::TRect;
-use crate::core::event::TEvent;
+use crate::core::event::{TEvent, TEventQueue};
 use crate::core::view::TView;
 use crate::ui::screenbuffer::ScreenBuffer;
 
@@ -36,7 +36,7 @@ impl TView for TStatusLine {
         buffer.write_str(x, y, &line);
     }
 
-    fn handle_event(&mut self, _event: TEvent) {
+    fn handle_event(&mut self, _event: TEvent, queue: &TEventQueue) {
         // passive; no events
     }
 

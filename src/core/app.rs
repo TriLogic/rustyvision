@@ -1,4 +1,4 @@
-use crate::core::event::TEvent;
+use crate::core::event::{TEvent, TEventQueue};
 use crate::core::view::TView;
 use crate::ui::screenbuffer::ScreenBuffer;
 use crossterm::{
@@ -14,6 +14,7 @@ pub struct TApplication {
     pub running: bool,
     pub width: u16,
     pub height: u16,
+    pub queue: EventQueue,
 }
 
 impl TApplication {
@@ -23,6 +24,7 @@ impl TApplication {
             running: true,
             width,
             height,
+            queue: EventQueue::new(),
         }
     }
 
@@ -40,12 +42,18 @@ impl TApplication {
             print!("{}", buffer.flush_to_string());
             stdout.flush().unwrap();
 
-            // Handle events
+            // Step 1: Handle internal events first
+            if let Some(event) = self.queue.get_event() {
+                self.handle_event(event);
+                continue;
+            }
+
+            // Step 2: Poll terminal events
             if event::poll(Duration::from_millis(200)).unwrap() {
                 if let Ok(ev) = event::read() {
                     let tevent = match ev {
                         Event::Key(key) => {
-                            if key.code == KeyCode::Esc || key.code == KeyCode::F(10) {
+                            if key.code == KeyCode::Esc {
                                 self.running = false;
                                 continue;
                             }
@@ -55,7 +63,7 @@ impl TApplication {
                         _ => TEvent::None,
                     };
 
-                    self.root.handle_event(tevent);
+                    self.handle_event(tevent);
                 }
             }
         }
@@ -63,5 +71,27 @@ impl TApplication {
         // Exit cleanly
         execute!(stdout, LeaveAlternateScreen).unwrap();
         disable_raw_mode().unwrap();
+    }
+
+    fn handle_event(&mut self, event: TEvent) {
+        match event {
+            TEvent::Command(cmd) => {
+                if cmd == 0 {
+                    // Command 0 = close menu or cancel
+                } else if cmd == 9999 {
+                    self.running = false;
+                } else {
+                    // Your app handles command logic here
+                    println!("Command triggered: {}", cmd);
+                }
+            }
+            other => {
+                self.root.handle_event(other, &self.queue);
+            }
+        }
+    }
+
+    pub fn put_event(&self, event: TEvent) {
+        self.queue.put_event(event);
     }
 }

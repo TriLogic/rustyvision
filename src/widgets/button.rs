@@ -1,5 +1,5 @@
+use crate::core::event::{TEvent, TEventQueue};
 use crate::core::rect::TRect;
-use crate::core::event::TEvent;
 use crate::core::view::TView;
 use crate::ui::screenbuffer::ScreenBuffer;
 use crossterm::event::{KeyCode, KeyEvent};
@@ -47,7 +47,7 @@ impl TView for TButton {
         buffer.write_str(x, y, &content);
     }
 
-    fn handle_event(&mut self, event: TEvent) {
+    fn handle_event(&mut self, event: TEvent, queue: &TEventQueue) {
         if let TEvent::Key(KeyEvent { code: KeyCode::Enter, .. })
             | TEvent::Key(KeyEvent { code: KeyCode::Char(' '), .. }) = event
         {
