@@ -7,3 +7,4 @@ pub mod radiobuttons;
 pub mod listbox;
 pub mod footerbar;
 pub mod statusline;
+pub mod menu;

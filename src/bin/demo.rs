@@ -8,7 +8,6 @@ use rustyvision::widgets::{
     inputline::TInputLine,
     label::TLabel,
     listbox::TListBox,
-    menubar::TMenuBar,
     radiobuttons::TRadioButtons,
     statusline::TStatusLine,
     footerbar::TFooterBar,
@@ -86,10 +85,12 @@ fn main() {
     let screen_height = 25;
 
     // Menu bar
+    /*
     let menubar = TMenuBar::new(
         TRect { x: 0, y: 0, width: screen_width, height: 1 },
         vec![("File", 1), ("Edit", 2), ("Help", 3)],
     );
+    */
 
     // Dialog
     let mut dialog = TDialog::new("Demo Dialog", TRect { x: 5, y: 2, width: 70, height: 20 });
